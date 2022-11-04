@@ -208,15 +208,27 @@ class GeneSequencing:
 				if i == j:
 					d = -3
 				# print("d: ", d, " array[n][t-1]: ", array[n][t-1])
-				if d+array[n-1][t-1] <= 5+array[n][t-1] and d+array[n-1][t-1] <= 5+array[n-1][t]: # compare above, side, and diagonal
-					array[n][t] = d + array[n-1][t-1]
-					prev[n][t] = 's'
-				elif 5+array[n][t-1] <= 5+array[n-1][t]:
-					array[n][t] = 5+array[n][t-1]
+				diagonal = d+array[n-1][t-1]
+				left = 5+array[n][t-1]
+				up = 5+array[n-1][t]
+				if left <= diagonal and left <= up:
+					array[n][t] = left
+					prev[n][t] = 'd'
+				elif up <= diagonal:
+					array[n][t] = up
 					prev[n][t] = 'i'
 				else:
-					array[n][t] = 5+array[n-1][t]
-					prev[n][t] = 'd'
+					array[n][t] = diagonal
+					prev[n][t] = 's'
+				# if d+array[n-1][t-1] <= 5+array[n][t-1] and d+array[n-1][t-1] <= 5+array[n-1][t]: # compare above, side, and diagonal
+				# 	array[n][t] = d + array[n-1][t-1]
+				# 	prev[n][t] = 's'
+				# elif 5+array[n][t-1] <= 5+array[n-1][t]:
+				# 	array[n][t] = 5+array[n][t-1]
+				# 	prev[n][t] = 'i'
+				# else:
+				# 	array[n][t] = 5+array[n-1][t]
+				# 	prev[n][t] = 'd'
 				t += 1
 				if t > xsize:
 					break
@@ -234,20 +246,17 @@ class GeneSequencing:
 		for cur in range(xsize+ysize):
 			if prev[n][t] == 's':
 				# substitution or equal
-				# doesn't mtater if they're equal or substitution, it prints the same thing
 				n -= 1
 				t -= 1
 			elif prev[n][t] == 'i':
 				#insertion
 				# final_string = my_string[:index] + 'you ' + my_string[index:]
 				al1 = al1[:placeInString1] + '-' + al1[placeInString1:]
-				placeInString1 += 1
-				t -= 1
+				n -= 1
 			elif prev[n][t] == 'd':
 				# deletion
 				al2 = al2[:placeInString2] + '-' + al2[placeInString2:]
-				placeInString2 += 1
-				n -= 1
+				t -= 1
 			else:
 				j = 7
 			placeInString1 -= 1
