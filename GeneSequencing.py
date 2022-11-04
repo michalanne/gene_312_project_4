@@ -51,7 +51,7 @@ class GeneSequencing:
 
 	def solveBanded(self, seq1, seq2, align_length):
 		k = 7
-		print("seq1: ", seq1, "seq2: ", seq2)
+		# print("seq1: ", seq1, "seq2: ", seq2)
 		ysize = len(seq1)
 		xsize = len(seq2)
 		len1 = len(seq1)
@@ -77,12 +77,14 @@ class GeneSequencing:
 			array[0][q] = q * 5
 		n = 0
 		t = 0
+		# begin nested for loop that will loop through every single item in array and populate it
 		for i in seq1:
 			r = 7
 			if n >= len1-3:
 				r = 4+len1-n
 			if n <= 3:
 				r = n + 3
+			# runs 7 times unless it's the first or last few lines
 			for q in range(r):
 				d = 1
 				if n > 3:
@@ -94,25 +96,25 @@ class GeneSequencing:
 				if curr >= len(seq2):
 					curr = len(seq2) - 1
 				if i == seq2[curr]:
-					d = -3
+					d = -3 # if the items are the same, d = -3, if they're different, d = 1
 				if n <= 3:
 					diagonal = d+array[n-1][t-1]
 					above = 5+array[n-1][t]
 					if t == 0:
-						side = math.inf
+						side = math.inf # if side does not exist, then it is infinity
 					else:
 						side = 5+array[n][t-1]
 				if n > 3:
 					diagonal = d + array[n - 1][t]
 					if t == 6:
-						above = math.inf
+						above = math.inf # if above node doesn't exist, infinity
 					else:
 						above = 5 + array[n - 1][t+1]
 					if t == 0:
-						side = math.inf
+						side = math.inf # if the side does not exist, then it is infinity
 					else:
 						side = 5 + array[n][t-1]
-				if diagonal <= side and diagonal <= above:
+				if diagonal <= side and diagonal <= above: # compare all of them, set it equal to the smallest
 					array[n][q] = diagonal
 					prev[n][q] = 's'
 				elif side <= above:
@@ -126,9 +128,49 @@ class GeneSequencing:
 					break
 			n += 1
 			t = 0
-			if n == ysize:
+			if n == ysize: # just in case, so it doesn't get too large
 				break
-		return array[ysize-1][3], "unfinished", "unfinished"
+
+		n = ysize - 1
+		t = xsize - 1
+		al1 = seq2[0:xsize]
+		al2 = seq1[0:ysize]
+		placeInString1 = xsize
+		placeInString2 = ysize
+		for cur in range(xsize+ysize):
+			if n == 0 and t == 0:
+				al1 += seq2[0]
+				al2 += seq1[0]
+				break
+			if prev[n][t] == 's':
+				# substitution or equal
+				# doesn't mtater if they're equal or substitution, it prints the same thing
+				n -= 1
+				t -= 1
+			elif prev[n][t] == 'i':
+				#insertion
+				# final_string = my_string[:index] + 'you ' + my_string[index:]
+				al1 = al1[:placeInString1] + '-' + al1[placeInString1:]
+				t -= 1
+			elif prev[n][t] == 'd':
+				# deletion
+				al2 = al2[:placeInString2] + '-' + al2[placeInString2:]
+				n -= 1
+			else:
+				j = 7
+			placeInString1 -= 1
+			placeInString2 -= 1
+
+		# a = al1[::-1]
+		# a2 = al2[::-1]
+		# if seq1 == "exponential" and seq2 == "exponential":
+		# 	j = 5/0
+		a = al1
+		a2 = al2
+		a = a[0:100]
+		a2 = a2[0:100]
+
+		return array[ysize-1][3], a, a2 # returning finished
 
 	def jB(self, i, j):
 		if i <= 3:
@@ -211,7 +253,6 @@ class GeneSequencing:
 				al2 = al2[:placeInString2] + '-' + al2[placeInString2:]
 				n -= 1
 			else:
-				# freak out
 				j = 7
 			placeInString1 -= 1
 			placeInString2 -= 1
