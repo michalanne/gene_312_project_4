@@ -179,17 +179,15 @@ class GeneSequencing:
 
 
 	def solveUnbanded(self, seq1, seq2, align_length):
-		# print(seq1)
-		# print(seq2)
 		ysize = len(seq1)
 		xsize = len(seq2)
 		if align_length < ysize:
-			ysize = align_length
+			ysize = align_length # make sure you don't assign align_length if it's longer than the length of the word
 		if align_length < xsize:
 			xsize = align_length
 		prev = []
 		array = []
-		for ar in range(ysize+1):
+		for ar in range(ysize+1): # populate arrays
 			c = []
 			d = []
 			for col in range(xsize+1):
@@ -201,7 +199,7 @@ class GeneSequencing:
 		n = 1
 		t = 1
 		for r in range(ysize+1):
-			array[r][0] = r * 5
+			array[r][0] = r * 5 # populate the first row and the first column so we have something to work with
 		for q in range(xsize+1):
 			array[0][q] = q * 5
 		for i in seq1:
@@ -210,7 +208,7 @@ class GeneSequencing:
 				if i == j:
 					d = -3
 				# print("d: ", d, " array[n][t-1]: ", array[n][t-1])
-				if d+array[n-1][t-1] <= 5+array[n][t-1] and d+array[n-1][t-1] <= 5+array[n-1][t]:
+				if d+array[n-1][t-1] <= 5+array[n][t-1] and d+array[n-1][t-1] <= 5+array[n-1][t]: # compare above, side, and diagonal
 					array[n][t] = d + array[n-1][t-1]
 					prev[n][t] = 's'
 				elif 5+array[n][t-1] <= 5+array[n-1][t]:
@@ -224,20 +222,16 @@ class GeneSequencing:
 					break
 			n += 1
 			t = 1
-			if n > ysize:
+			if n > ysize: # just in case
 				break
-		# print (array)
 		n = ysize - 1
 		t = xsize - 1
 		al1 = seq2[0:xsize]
 		al2 = seq1[0:ysize]
 		placeInString1 = xsize
 		placeInString2 = ysize
+		# beginning of alignment for loop
 		for cur in range(xsize+ysize):
-			if n == 0 and t == 0:
-				al1 += seq2[0]
-				al2 += seq1[0]
-				break
 			if prev[n][t] == 's':
 				# substitution or equal
 				# doesn't mtater if they're equal or substitution, it prints the same thing
@@ -247,15 +241,21 @@ class GeneSequencing:
 				#insertion
 				# final_string = my_string[:index] + 'you ' + my_string[index:]
 				al1 = al1[:placeInString1] + '-' + al1[placeInString1:]
+				placeInString1 += 1
 				t -= 1
 			elif prev[n][t] == 'd':
 				# deletion
 				al2 = al2[:placeInString2] + '-' + al2[placeInString2:]
+				placeInString2 += 1
 				n -= 1
 			else:
 				j = 7
 			placeInString1 -= 1
 			placeInString2 -= 1
+			if n == 0 and t == 0:
+				# al1 += seq2[0]
+				# al2 += seq1[0]
+				break
 
 		# a = al1[::-1]
 		# a2 = al2[::-1]
@@ -263,18 +263,7 @@ class GeneSequencing:
 		# 	j = 5/0
 		a = al1
 		a2 = al2
-		a = a[0:100]
+		a = a[0:100] # only the first 100 characters
 		a2 = a2[0:100]
 
 		return array[ysize][xsize], a, a2
-
-
-# banded is the limited amount of the table being filled out, unbanded is filling out the whole table
-# pseudocode on slide 37
-# banded is the more complex one whoops
-
-# Linked List Ideas: 6 nodes, pointing all directions
-
-# ask about how to best implement the bounded one, like use a 2d array or linkedlist or what
-# bandwidth = 2d+1
-# do homework !!!
